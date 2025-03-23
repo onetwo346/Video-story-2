@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story to Vid</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, cyan, magenta);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        input {
+            width: 80%;
+            max-width: 400px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid cyan;
+            border-radius: 5px;
+            background: #222;
+            color: white;
+            text-align: center;
+            outline: none;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: cyan;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: magenta;
+        }
+        .loading {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: cyan;
+        }
+        .video-container {
+            margin-top: 20px;
+            display: none;
+        }
+        video {
+            width: 80%;
+            max-width: 600px;
+            border: 2px solid cyan;
+            border-radius: 10px;
+        }
+        .download-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Story to Vid</h1>
+    <input type="text" id="storyInput" placeholder="Enter a historical topic...">
+    <button onclick="generateStory()">Generate Story</button>
+    
+    <div class="loading" id="loading">Generating story...</div>
+    
+    <div class="video-container" id="videoContainer">
+        <video controls id="generatedVideo">
+            <source src="sample-video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <button class="download-btn" id="downloadBtn" onclick="downloadVideo()">Download Video</button>
+    </div>
+
+    <script>
+        function generateStory() {
+            let input = document.getElementById("storyInput").value;
+            if (input.trim() === "") {
+                alert("Please enter a historical topic!");
+                return;
+            }
+
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("videoContainer").style.display = "none";
+            document.getElementById("downloadBtn").style.display = "none";
+
+            // Simulate AI processing time
+            setTimeout(() => {
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("videoContainer").style.display = "block";
+
+                // Replace with actual video URL once generated
+                document.getElementById("generatedVideo").src = "generated-story-video.mp4";
+                document.getElementById("downloadBtn").style.display = "block";
+            }, 5000); // Simulating a 5-second delay for processing
+        }
+
+        function downloadVideo() {
+            const videoUrl = document.getElementById("generatedVideo").src;
+            const a = document.createElement('a');
+            a.href = videoUrl;
+            a.download = "historical-story-video.mp4";
+            a.click();
+        }
+    </script>
+
+</body>
+</html>
