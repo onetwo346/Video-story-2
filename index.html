@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StoryVid AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6d28d9;
+            --secondary-color: #db2777;
+            --accent-color: #10b981;
+            --dark-bg: #0f172a;
+            --darker-bg: #0a0f1c;
+            --light-text: #f1f5f9;
+            --card-bg: #1e293b;
+            --input-bg: #334155;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--light-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--darker-bg);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-speed);
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        .generator-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: white;
+            outline: none;
+            transition: var(--transition-speed);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(109, 40, 217, 0.2);
+        }
+
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .option-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition-speed);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .secondary-button {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--light-text);
+        }
+
+        .loading {
+            display: none;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        .loading-progress {
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 300px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .video-container {
+            margin-top: 2rem;
+            display: none;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            background: var(--darker-bg);
+        }
+
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+        }
+
+        .video-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .history-section {
+            margin-top: 3rem;
+            width: 100%;
+        }
+
+        .history-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .history-item {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: var(--transition-speed);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .history-thumb {
+            width: 100%;
+            height: 140px;
+            background: var(--darker-bg);
+            position: relative;
+        }
+
+        .history-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: var(--transition-speed);
+        }
+
+        .history-thumb:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-icon {
+            font-size: 2rem;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-info {
+            padding: 1rem;
+        }
+
+        .history-topic {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-date {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        footer {
+            background-color: var(--darker-bg);
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 3rem;
+        }
+
+        .error-message {
+            display: none;
+            color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 10px;
+            }
+
+            .options-container {
+                flex-direction: column;
+            }
+
+            .buttons-container {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--card-bg);
+            color: var(--light-text);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-film logo-icon"></i>
+            <span class="logo-text">StoryVid AI</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#"><i class="fas fa-history"></i> My Videos</a></li>
+                <li><a href="#"><i class="fas fa-info-circle"></i> How It Works</a></li>
+                <li><a href="#"><i class="fas fa-user"></i> Account</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <h1>Transform Stories into Stunning Videos</h1>
+            <p class="subtitle">Enter a historical topic or any story idea, and our AI will generate a professional video in minutes.</p>
+        </section>
+
+        <div class="generator-card">
+            <div class="input-group">
+                <label for="storyInput">What's your story about?</label>
+                <input type="text" id="storyInput" placeholder="Enter a historical event, figure, or any story topic..." autofocus>
+            </div>
+
+            <div class="options-container">
+                <div class="option-group">
+                    <label for="videoStyle">Video Style</label>
+                    <select id="videoStyle">
+                        <option value="documentary">Documentary</option>
+                        <option value="cinematic">Cinematic</option>
+                        <option value="animated">Animated</option>
+                        <option value="vintage">Vintage Footage</option>
+                    </select>
+                </div>
+
+                <div class="option-group">
+                    <label for="videoLength">Video Length</label>
+                    <select id="videoLength">
+                        <option value="short">Short (30s)</option>
+                        <option value="medium" selected>Medium (1-2 min)</option>
+                        <option value="long">Long (3-5 min)</option>
+                    </select>
+                </div>
+
+                <div class="option-group">
+                    <label for="narration">Narration Voice</label>
+                    <select id="narration">
+                        <option value="male">Male Narrator</option>
+                        <option value="female">Female Narrator</option>
+                        <option value="none">No Narration</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="additionalDetails">Additional Details (Optional)</label>
+                <textarea id="additionalDetails" rows="3" placeholder="Add specific details, facts, or preferences for your video..."></textarea>
+            </div>
+
+            <div class="buttons-container">
+                <button id="generateBtn">
+                    <i class="fas fa-magic"></i> Generate Video
+                </button>
+                <button class="secondary-button" id="savePromptBtn">
+                    <i class="far fa-save"></i> Save Prompt
+                </button>
+            </div>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            <i class="fas fa-exclamation-circle"></i> 
+            <span id="errorText">Please enter a story topic to generate a video.</span>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text" id="loadingText">Crafting your story...</div>
+            <div class="loading-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="video-container fade-in" id="videoContainer">
+            <div class="video-wrapper">
+                <video id="videoPlayer" controls>
+                    <source src="sample-video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-controls">
+                <button id="downloadBtn">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                <button id="shareBtn">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+                <button class="secondary-button" id="regenerateBtn">
+                    <i class="fas fa-redo"></i> Regenerate
+                </button>
+            </div>
+        </div>
+
+        <section class="history-section" id="historySection">
+            <h2 class="history-title">
+                <i class="fas fa-history"></i> Your Recent Videos
+            </h2>
+            <div class="history-grid">
+                <!-- History items will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2025 StoryVid AI • All rights reserved • <a href="#" style="color: inherit;">Terms of Service</a> • <a href="#" style="color: inherit;">Privacy Policy</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const storyInput = document.getElementById('storyInput');
+            const videoStyle = document.getElementById('videoStyle');
+            const videoLength = document.getElementById('videoLength');
+            const narration = document.getElementById('narration');
+            const additionalDetails = document.getElementById('additionalDetails');
+            const generateBtn = document.getElementById('generateBtn');
+            const savePromptBtn = document.getElementById('savePromptBtn');
+            const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loadingText');
+            const progressBar = document.getElementById('progressBar');
+            const videoContainer = document.getElementById('videoContainer');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const shareBtn = document.getElementById('shareBtn');
+            const regenerateBtn = document.getElementById('regenerateBtn');
+            const historySection = document.getElementById('historySection');
+            const historyGrid = document.querySelector('.history-grid');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+
+            // Sample history data - would come from a database in a real application
+            const sampleHistory = [
+                { id: 1, topic: 'The Ancient Egyptian Pyramids', date: '2 days ago', thumbnail: '/api/placeholder/250/140' },
+                { id: 2, topic: 'World War II: D-Day Landing', date: '1 week ago', thumbnail: '/api/placeholder/250/140' },
+                { id: 3, topic: 'The Moon Landing', date: '2 weeks ago', thumbnail: '/api/placeholder/250/140' },
+                { id: 4, topic: 'The Renaissance in Italy', date: '3 weeks ago', thumbnail: '/api/placeholder/250/140' }
+            ];
+
+            // Populate history items
+            function renderHistoryItems() {
+                historyGrid.innerHTML = '';
+                sampleHistory.forEach(item => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.innerHTML = `
+                        <div class="history-thumb">
+                            <img src="${item.thumbnail}" alt="${item.topic}">
+                            <div class="play-overlay">
+                                <div class="play-icon">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-topic">${item.topic}</div>
+                            <div class="history-date">${item.date}</div>
+                        </div>
+                    `;
+                    historyItem.addEventListener('click', () => {
+                        // In a real app, this would load the saved video
+                        showVideo();
+                    });
+                    historyGrid.appendChild(historyItem);
+                });
+            }
+
+            // Initialize history section
+            renderHistoryItems();
+
+            // Show error message
+            function showError(message) {
+                errorText.textContent = message;
+                errorMessage.style.display = 'block';
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 5000);
+            }
+
+            // Simulate video generation process
+            function generateVideo() {
+                const topic = storyInput.value.trim();
+                
+                if (topic === '') {
+                    showError('Please enter a story topic to generate a video.');
+                    return;
+                }
+
+                // Hide any previous content
+                videoContainer.style.display = 'none';
+                errorMessage.style.display = 'none';
+                
+                // Show loading state
+                loading.style.display = 'block';
+                
+                // Update loading text messages to simulate AI process
+                const loadingMessages = [
+                    'Researching historical facts...',
+                    'Crafting a compelling narrative...',
+                    'Selecting footage and visuals...',
+                    'Adding music and sound effects...',
+                    'Finalizing your video...'
+                ];
+                
+                let currentMessage = 0;
+                let progress = 0;
+                
+                // Update progress bar
+                const progressInterval = setInterval(() => {
+                    progress += 1;
+                    progressBar.style.width = `${progress}%`;
+                    
+                    // Update loading message
+                    if (progress % 20 === 0 && currentMessage < loadingMessages.length - 1) {
+                        currentMessage++;
+                        loadingText.textContent = loadingMessages[currentMessage];
+                    }
+                    
+                    if (progress >= 100) {
+                        clearInterval(progressInterval);
+                        setTimeout(() => {
+                            loading.style.display = 'none';
+                            showVideo();
+                        }, 500);
+                    }
+                }, 50);
+                
+                // Add new item to history (in a real app, this would happen after successful generation)
+                setTimeout(() => {
+                    const newItem = {
+                        id: sampleHistory.length + 1,
+                        topic: topic,
+                        date: 'Just now',
+                        thumbnail: '/api/placeholder/250/140'
+                    };
+                    sampleHistory.unshift(newItem);
+                    renderHistoryItems();
+                }, 6000);
+            }
+
+            // Show the generated video
+            function showVideo() {
+                videoContainer.style.display = 'block';
+                // Scroll to video
+                videoContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // Event listeners
+            generateBtn.addEventListener('click', generateVideo);
+            
+            storyInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    generateVideo();
+                }
+            });
+            
+            regenerateBtn.addEventListener('click', function() {
+                // Restart generation process with current inputs
+                generateVideo();
+            });
+            
+            downloadBtn.addEventListener('click', function() {
+                // In a real app, this would trigger a download
+                showError('Download functionality would be implemented in a production environment.');
+            });
+            
+            shareBtn.addEventListener('click', function() {
+                // In a real app, this would open a share dialog
+                const shareDialog = document.createElement('div');
+                shareDialog.style.position = 'fixed';
+                shareDialog.style.top = '50%';
+                shareDialog.style.left = '50%';
+                shareDialog.style.transform = 'translate(-50%, -50%)';
+                shareDialog.style.background = 'var(--card-bg)';
+                shareDialog.style.padding = '20px';
+                shareDialog.style.borderRadius = '10px';
+                shareDialog.style.zIndex = '1000';
+                shareDialog.style.boxShadow = '0 0 20px rgba(0,0,0,0.5)';
+                
+                shareDialog.innerHTML = `
+                    <h3 style="margin-bottom: 15px;">Share Your Video</h3>
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px; justify-content: center;">
+                        <div class="tooltip" style="cursor: pointer;">
+                            <i class="fab fa-facebook fa-2x" style="color: #1877f2;"></i>
+                            <span class="tooltiptext">Facebook</span>
+                        </div>
+                        <div class="tooltip" style="cursor: pointer;">
+                            <i class="fab fa-twitter fa-2x" style="color: #1da1f2;"></i>
+                            <span class="tooltiptext">Twitter</span>
+                        </div>
+                        <div class="tooltip" style="cursor: pointer;">
+                            <i class="fab fa-linkedin fa-2x" style="color: #0077b5;"></i>
+                            <span class="tooltiptext">LinkedIn</span>
+                        </div>
+                        <div class="tooltip" style="cursor: pointer;">
+                            <i class="fas fa-envelope fa-2x" style="color: #d44638;"></i>
+                            <span class="tooltiptext">Email</span>
+                        </div>
+                    </div>
+                    <input type="text" value="https://storyvid.ai/share/v123456" style="margin-bottom: 15px; padding: 8px; width: 100%; border-radius: 5px;">
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button id="closeShareDialog" style="background: transparent; border: 1px solid white; padding: 8px 15px; border-radius: 5px; color: white; cursor: pointer;">Close</button>
+                        <button style="background: var(--primary-color); border: none; padding: 8px 15px; border-radius: 5px; color: white; cursor: pointer;">Copy Link</button>
+                    </div>
+                `;
+                
+                document.body.appendChild(shareDialog);
+                
+                document.getElementById('closeShareDialog').addEventListener('click', function() {
+                    document.body.removeChild(shareDialog);
+                });
+            });
+            
+            savePromptBtn.addEventListener('click', function() {
+                const topic = storyInput.value.trim();
+                if (topic === '') {
+                    showError('Please enter a story topic to save.');
+                    return;
+                }
+                
+                // In a real app, this would save to a database
+                showError('Prompt saved successfully!');
+                errorMessage.style.color = '#10b981';
+                errorMessage.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                
+                // Reset error message style after hiding
+                setTimeout(() => {
+                    errorMessage.style.color = '#ef4444';
+                    errorMessage.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>
